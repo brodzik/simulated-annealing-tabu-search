@@ -16,6 +16,8 @@ from src.algorithm import TabuSimulatedAnnealing
 from src.benchmark import *
 from src.temperature import *
 
+from datetime import datetime
+
 MIN_POINT_COLOR = "#111111"
 
 POINTS_ALPHA = 0.7
@@ -62,6 +64,9 @@ def collect_params() -> {}:
     for dim in DIMENSIONS:
         ackley_best_param[dim] = {}
         for tab_len in TAB_LEN_PARAM:
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            print("Current Time =", current_time)
             print("ackley_"+str(dim)+" "+str(tab_len))
             ackley_best_param[dim][tab_len] = {}
             # const
@@ -82,6 +87,9 @@ def collect_params() -> {}:
     for dim in DIMENSIONS:
         griewank_best_param[dim] = {}
         for tab_len in TAB_LEN_PARAM:
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            print("Current Time =", current_time)
             print("griewank_" + str(dim) + " " + str(tab_len))
             griewank_best_param[dim][tab_len] = {}
             # const
@@ -102,6 +110,9 @@ def collect_params() -> {}:
     for dim in DIMENSIONS:
         rastrigin_best_param[dim] = {}
         for tab_len in TAB_LEN_PARAM:
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            print("Current Time =", current_time)
             print("rastrigin_" + str(dim) + " " + str(tab_len))
             rastrigin_best_param[dim][tab_len] = {}
             # const

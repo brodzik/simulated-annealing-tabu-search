@@ -27,7 +27,7 @@ class TabuSimulatedAnnealing:
 
     """
 
-    def __init__(self, radius: float = 1.0, alpha: float = 0.5, clip: float = 0.0, max_tabu_tries: int=1000):
+    def __init__(self, radius: float = 1.0, alpha: float = 0.5, clip: float = 0.0, max_tabu_tries: int=1000000):
         assert radius > 0
         assert clip >= 0
         assert alpha >= 0
@@ -170,7 +170,7 @@ class TabuSimulatedAnnealing:
 
                     return y
 
-                # i = i + 1
+                i = i + 1
 
             if len(self.__tabu) > 0:
                 self.__tabu.pop(0)

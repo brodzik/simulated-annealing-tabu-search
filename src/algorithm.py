@@ -6,28 +6,22 @@ from numpy import random
 
 class TabuSimulatedAnnealing:
     """ Class representing simulated annealing algorithm with tabu.
-
-                    Args:
-                        radius: neighbourhood radius
-                        clip: limits the coordinates to interval [-clip, clip], 0 = no limit
-                        alpha: tabu neighbourhood radius coefficient
-
                     Attributes:
-                        __radius (float):
-                        __alpha (float):
-                        __clip (float):
-                        __tabu ([]):
-                        __tabu_length (int):
-                        log ([]):
-                        __point (np.ndarray);
-                        __score (float):
-                        __maximize (bool):
-                        __score_function:
-                        __max_tabu_tries:
+                        __radius (float): neighbourhood radius
+                        __alpha (float): tabu neighbourhood radius coefficient
+                        __clip (float): limits the coordinates to interval [-clip, clip], 0 = no limit
+                        __tabu ([]): tabu array
+                        __tabu_length (int): maximum length of tabu
+                        log ([]): current log
+                        __point (np.ndarray); current working point
+                        __score (float): score of current working point
+                        __maximize (bool): decide if function need maximizing or minimizing
+                        __score_function: function that calculates points' scores
+                        __max_tabu_tries: maximum number of iterations while picking new candidate point
 
     """
 
-    def __init__(self, radius: float = 1.0, alpha: float = 0.5, clip: float = 0.0, max_tabu_tries: int=1000000):
+    def __init__(self, radius: float = 1.0, alpha: float = 0.5, clip: float = 0.0, max_tabu_tries: int = 1000000):
         assert radius > 0
         assert clip >= 0
         assert alpha >= 0
@@ -37,12 +31,12 @@ class TabuSimulatedAnnealing:
         self.__clip = clip
         self.__tabu = []
         self.__tabu_length = 0
-        self.log = []
         self.__point = None
         self.__score = None
         self.__score_function = None
         self.__maximize = False
         self.__max_tabu_tries = max_tabu_tries
+        self.log = []
 
     def set_maximize(self):
         self.__maximize = True
@@ -86,7 +80,7 @@ class TabuSimulatedAnnealing:
     def __is_replaced(self, score: float, temperature: float) -> bool:
         return (self.__maximize and score > self.__score) or (
                 not self.__maximize and score < self.__score) or random.uniform(0, 1) < self.__calculate_annealing(
-                temperature, score)
+            temperature, score)
 
     def __calculate_annealing(self, temperature: float, new_score: float) -> float:
         return np.exp(-np.abs(new_score - self.__score) / temperature)

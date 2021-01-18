@@ -1,12 +1,8 @@
 """
-TODO:
-    - dla 2D:
-        * uzyc parametrow i dla kazdej funkcji kilkadziesiat razy:
-            wybrac punkt
-            dla kazdego schematu znalezc srednia liczbe iteracji potrzebnych do dojscia do optimum dla kazdej funkcji
-        * stworzyc wykresy porownujace schematy dojscia z jednego wybranego punktu
-    - dla ND:
-        * uzyc parametrow i dla kazdego schematu znalezc srednia liczbe iteracji potrzebnych do dojscia do optimum dla kazdej funkcji
+    Various tests for tabulated simulated annealing with different cooling scheme for:
+     - Ackley function
+     - Griewank function
+     - Rastrigin function
 """
 import json
 
@@ -17,7 +13,9 @@ from src.benchmark import *
 from src.temperature import *
 
 from datetime import datetime
-
+"""
+        Various const values that determine how all tests functions behave.
+"""
 MIN_POINT_COLOR = "#111111"
 
 POINTS_ALPHA = 0.7
@@ -66,6 +64,11 @@ def read_data(name: str):
 
 
 def collect_avg_iterations() -> {}:
+    """
+        Function that finds average iterations for best parameters for specific dimension and tabu length.
+
+        It reads data from file called "all_params.json"
+    """
     all = read_data("all_" + PARAM_FILE)
 
     # ackley
@@ -165,6 +168,9 @@ def collect_avg_iterations() -> {}:
 
 
 def best_adaptive_avg(points, params, optimum, radius, function, tab_len, minimize: bool = True):
+    """
+        Function that finds average iterations for best parameters for specific dimension and tabu length for adaptive cooling scheme.
+    """
     avg_iterations = 0
 
     for i in range(len(points)):
@@ -208,6 +214,9 @@ def best_adaptive_avg(points, params, optimum, radius, function, tab_len, minimi
 
 
 def best_logarithmic_avg(points, param, optimum, radius, function, tab_len, minimize: bool = True):
+    """
+        Function that finds average iterations for best parameters for specific dimension and tabu length for logarithmic cooling scheme.
+    """
     avg_iterations = 0
 
     for i in range(len(points)):
@@ -242,6 +251,9 @@ def best_logarithmic_avg(points, param, optimum, radius, function, tab_len, mini
 
 
 def best_geometrical_avg(points, params, optimum, radius, function, tab_len, minimize: bool = True):
+    """
+        Function that finds average iterations for best parameters for specific dimension and tabu length for geometrical cooling scheme.
+    """
     avg_iterations = 0
 
     for i in range(len(points)):
@@ -276,6 +288,9 @@ def best_geometrical_avg(points, params, optimum, radius, function, tab_len, min
 
 
 def best_const_avg(points, param, optimum, radius, function, tab_len, minimize: bool = True):
+    """
+        Function that finds average iterations for best parameters for specific dimension and tabu length for const cooling scheme.
+    """
     avg_iterations = 0
 
     for i in range(len(points)):
@@ -319,6 +334,11 @@ def collect_params_data() -> {}:
 
 
 def collect_params() -> {}:
+    """
+        Function that finds best parameters for specific dimension and tabu length for all cooling schemes for every test function.
+
+        It saves all of them to single "all_params.json" file and it saves parameters for specific functions in separate files.
+    """
     # ackley
     ackley_best_param = {}
     for dim in DIMENSIONS:
@@ -392,6 +412,9 @@ def collect_params() -> {}:
 
 
 def best_adaptive_params(function, tab_len, dimension: int = 2, minimize: bool = True):
+    """
+            Function that finds best parameters for specific dimension and tabu length for adaptive cooling scheme.
+    """
     best_params = None
     best_sum = None
 
@@ -437,6 +460,9 @@ def best_adaptive_params(function, tab_len, dimension: int = 2, minimize: bool =
 
 
 def best_logarithmic_params(function, tab_len, dimension: int = 2, minimize: bool = True):
+    """
+            Function that finds best parameters for specific dimension and tabu length for logarithmic cooling scheme.
+    """
     best_A = None
     best_sum = None
 
@@ -475,6 +501,9 @@ def best_logarithmic_params(function, tab_len, dimension: int = 2, minimize: boo
 
 
 def best_geometrical_params(function, tab_len, dimension: int = 2, minimize: bool = True):
+    """
+            Function that finds best parameters for specific dimension and tabu length for geometrical cooling scheme.
+    """
     best_params = None
     best_sum = None
 
@@ -513,6 +542,9 @@ def best_geometrical_params(function, tab_len, dimension: int = 2, minimize: boo
 
 
 def best_const_params(function, tab_len, dimension: int = 2, minimize: bool = True):
+    """
+            Function that finds best parameters for specific dimension and tabu length for const cooling scheme.
+    """
     best_A = None
     best_sum = None
 
@@ -551,6 +583,9 @@ def best_const_params(function, tab_len, dimension: int = 2, minimize: bool = Tr
 
 
 def const_params_diff_2D():
+    """
+        Function that draws plots for const cooling scheme with very different parameters.
+    """
     A1 = 0.1
     A2 = 10.0
 
@@ -566,6 +601,9 @@ def const_params_diff_2D():
 
 
 def geometrical_params_diff_2D():
+    """
+        Function that draws plots for geometrical cooling scheme with very different parameters.
+    """
     A = 1
     A1 = 0.1
     A2 = 10.0
@@ -596,6 +634,9 @@ def geometrical_params_diff_2D():
 
 
 def logarithmic_params_diff_2D():
+    """
+        Function that draws plots for logarithmic cooling scheme with very different parameters.
+    """
     A = 1
     A1 = 0.1
     A2 = 10.0
@@ -612,6 +653,9 @@ def logarithmic_params_diff_2D():
 
 
 def adaptive_params_diff_2D():
+    """
+        Function that draws plots for adaptive cooling scheme with very different parameters.
+    """
     A = 2
     A1 = 0.25
     A2 = 4.0
@@ -722,15 +766,3 @@ def draw_diff(log1, log2, label1: str, label2: str, title: str = "", name: str =
         plt.show()
     else:
         plt.savefig(name + "_score.png")
-
-
-def print_progress_bar(iteration: int, total: int, length: int = 50) -> None:
-    filled = int(length * iteration // total)
-    bar = '█' * filled + '-' * (length - filled)
-    print('\r', f"Progress: |{bar}| " + "{0:.2f}".format(100 * (iteration / float(total))) + "% Iteration: " + str(
-        iteration) + "/" + str(total), end='')
-    if iteration == total:
-        print("\n")
-
-
-collect_avg_iterations()

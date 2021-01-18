@@ -105,8 +105,6 @@ class TabuSimulatedAnnealing:
         assert x1.ndim == 1
         assert x2.ndim == 1
 
-        # print(np.linalg.norm(x1 - x2))
-
         return np.linalg.norm(x1 - x2) <= self.__alpha * self.__radius
 
     def __check_violates_tabu(self, x: np.ndarray) -> bool:

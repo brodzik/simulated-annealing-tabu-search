@@ -31,7 +31,9 @@ TAB_LEN = 10
 
 START_POINT = np.array([10, 10])
 
-ITERATIONS = 1000
+BEST_PARAMS_ITERATIONS = 1000
+
+AVG_ITERATIONS = 100000
 
 TAB_LEN_PARAM = [i for i in range(0, 16, 5)]
 
@@ -42,6 +44,11 @@ GLOBAL_EXTREMUM_RADIUS = 10
 POINTS_NUM = 50
 
 PARAM_FILE = "params.json"
+AVG_FILE = "avg.json"
+
+MAX_AVG_ITERATIONS = 50
+
+ACCEPTANCE_RADIUS = 0.5
 
 
 def save_data(name: str, data: {}):
@@ -58,6 +65,259 @@ def read_data(name: str):
     return data
 
 
+def collect_avg_iterations() -> {}:
+    all = read_data("all_" + PARAM_FILE)
+
+    # ackley
+    ackley_params = all["ackley"]
+    for dim in ackley_params:
+        optimum = np.array([0 for _ in range(int(dim))])
+        for tab_len in ackley_params[dim]:
+            points = [np.random.rand(int(dim)) * GLOBAL_EXTREMUM_RADIUS for _ in range(POINTS_NUM)]
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            print("Current Time =", current_time)
+            print("ackley " + str(dim) + " " + str(tab_len))
+            # const
+            ackley_params[dim][tab_len]["const"] = best_const_avg(points, ackley_params[dim][tab_len]["const"], optimum,
+                                                                  ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("ackley_" + AVG_FILE, ackley_params)
+            # adaptive
+            ackley_params[dim][tab_len]["adaptive"] = best_adaptive_avg(points, ackley_params[dim][tab_len]["adaptive"],
+                                                                        optimum, ACCEPTANCE_RADIUS, ackley,
+                                                                        int(tab_len))
+            save_data("ackley_" + AVG_FILE, ackley_params)
+            # logarithmic
+            ackley_params[dim][tab_len]["logarithmic"] = best_logarithmic_avg(points, ackley_params[dim][tab_len][
+                "logarithmic"], optimum, ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("ackley_" + AVG_FILE, ackley_params)
+            # geometrical
+            ackley_params[dim][tab_len]["geometrical"] = best_geometrical_avg(points, ackley_params[dim][tab_len][
+                "geometrical"], optimum, ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("ackley_" + AVG_FILE, ackley_params)
+
+    # griewank
+    griewank_params = all["griewank"]
+    for dim in griewank_params:
+        optimum = np.array([0 for _ in range(int(dim))])
+        for tab_len in griewank_params[dim]:
+            points = [np.random.rand(int(dim)) * GLOBAL_EXTREMUM_RADIUS for _ in range(POINTS_NUM)]
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            print("Current Time =", current_time)
+            print("griewank " + str(dim) + " " + str(tab_len))
+            # const
+            griewank_params[dim][tab_len]["const"] = best_const_avg(points, griewank_params[dim][tab_len]["const"],
+                                                                    optimum,
+                                                                    ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("griewank_" + AVG_FILE, griewank_params)
+            # adaptive
+            griewank_params[dim][tab_len]["adaptive"] = best_adaptive_avg(points,
+                                                                          griewank_params[dim][tab_len]["adaptive"],
+                                                                          optimum, ACCEPTANCE_RADIUS, ackley,
+                                                                          int(tab_len))
+            save_data("griewank_" + AVG_FILE, griewank_params)
+            # logarithmic
+            griewank_params[dim][tab_len]["logarithmic"] = best_logarithmic_avg(points, griewank_params[dim][tab_len][
+                "logarithmic"], optimum, ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("griewank_" + AVG_FILE, griewank_params)
+            # geometrical
+            griewank_params[dim][tab_len]["geometrical"] = best_geometrical_avg(points, griewank_params[dim][tab_len][
+                "geometrical"], optimum, ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("griewank_" + AVG_FILE, griewank_params)
+
+    # rastrigin
+    rastrigin_params = all["rastrigin"]
+    for dim in rastrigin_params:
+        optimum = np.array([0 for _ in range(int(dim))])
+        for tab_len in rastrigin_params[dim]:
+            points = [np.random.rand(int(dim)) * GLOBAL_EXTREMUM_RADIUS for _ in range(POINTS_NUM)]
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            print("Current Time =", current_time)
+            print("rastrigin " + str(dim) + " " + str(tab_len))
+            # const
+            rastrigin_params[dim][tab_len]["const"] = best_const_avg(points, rastrigin_params[dim][tab_len]["const"],
+                                                                     optimum,
+                                                                     ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("rastrigin_" + AVG_FILE, rastrigin_params)
+            # adaptive
+            rastrigin_params[dim][tab_len]["adaptive"] = best_adaptive_avg(points,
+                                                                           rastrigin_params[dim][tab_len]["adaptive"],
+                                                                           optimum, ACCEPTANCE_RADIUS, ackley,
+                                                                           int(tab_len))
+            save_data("rastrigin_" + AVG_FILE, rastrigin_params)
+            # logarithmic
+            rastrigin_params[dim][tab_len]["logarithmic"] = best_logarithmic_avg(points, rastrigin_params[dim][tab_len][
+                "logarithmic"], optimum, ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("rastrigin_" + AVG_FILE, rastrigin_params)
+            # geometrical
+            rastrigin_params[dim][tab_len]["geometrical"] = best_geometrical_avg(points, rastrigin_params[dim][tab_len][
+                "geometrical"], optimum, ACCEPTANCE_RADIUS, ackley, int(tab_len))
+            save_data("rastrigin_" + AVG_FILE, rastrigin_params)
+
+    all["ackley"] = ackley_params
+    all["griewank"] = griewank_params
+    all["rastrigin"] = rastrigin_params
+    save_data("all_" + AVG_FILE, all)
+
+    return all
+
+
+def best_adaptive_avg(points, params, optimum, radius, function, tab_len, minimize: bool = True):
+    avg_iterations = 0
+
+    for i in range(len(points)):
+        print("adaptive ", i + 1, " out of ", len(points))
+        tsa = TabuSimulatedAnnealing()
+
+        if minimize:
+            tsa.set_minimize()
+        else:
+            tsa.set_maximize()
+
+        first_point = points[i]
+
+        tsa.set_start(point=first_point, score_function=function, tabu_length=tab_len)
+        t = 1
+        temperature = 1
+        better = 0
+        worse = 0
+        lowest_iterations = None
+        while t < AVG_ITERATIONS:
+            temperature1 = adaptive(temperature, params[0], params[1], better, worse)
+            point, score, diff = tsa.next(temperature=temperature1)
+
+            if np.linalg.norm(point - optimum) <= radius:
+                if lowest_iterations is None or t < lowest_iterations:
+                    lowest_iterations = t
+                break
+
+            if diff is "better":
+                better = better + 1
+            elif diff is "worse":
+                worse = worse + 1
+            t = t + 1
+        if lowest_iterations is None:
+            lowest_iterations = t
+        avg_iterations = avg_iterations + lowest_iterations
+
+    avg_iterations = avg_iterations / len(points)
+
+    return avg_iterations
+
+
+def best_logarithmic_avg(points, param, optimum, radius, function, tab_len, minimize: bool = True):
+    avg_iterations = 0
+
+    for i in range(len(points)):
+        print("logarithmic ", i + 1, " out of ", len(points))
+        tsa = TabuSimulatedAnnealing()
+
+        if minimize:
+            tsa.set_minimize()
+        else:
+            tsa.set_maximize()
+
+        first_point = points[i]
+
+        tsa.set_start(point=first_point, score_function=function, tabu_length=tab_len)
+        t = 1
+        lowest_iterations = None
+        while t < AVG_ITERATIONS:
+            point, score, _ = tsa.next(temperature=logarithmic(t, param))
+
+            if np.linalg.norm(point - optimum) <= radius:
+                if lowest_iterations is None or t < lowest_iterations:
+                    lowest_iterations = t
+                break
+            t = t + 1
+        if lowest_iterations is None:
+            lowest_iterations = t
+        avg_iterations = avg_iterations + lowest_iterations
+
+    avg_iterations = avg_iterations / len(points)
+
+    return avg_iterations
+
+
+def best_geometrical_avg(points, params, optimum, radius, function, tab_len, minimize: bool = True):
+    avg_iterations = 0
+
+    for i in range(len(points)):
+        print("geometrical ", i + 1, " out of ", len(points))
+        tsa = TabuSimulatedAnnealing()
+
+        if minimize:
+            tsa.set_minimize()
+        else:
+            tsa.set_maximize()
+
+        first_point = points[i]
+
+        tsa.set_start(point=first_point, score_function=function, tabu_length=tab_len)
+        t = 1
+        lowest_iterations = None
+        while t < AVG_ITERATIONS:
+            point, score, _ = tsa.next(temperature=geometrical(t, params[0], params[1]))
+
+            if np.linalg.norm(point - optimum) <= radius:
+                if lowest_iterations is None or t < lowest_iterations:
+                    lowest_iterations = t
+                break
+            t = t + 1
+        if lowest_iterations is None:
+            lowest_iterations = t
+        avg_iterations = avg_iterations + lowest_iterations
+
+    avg_iterations = avg_iterations / len(points)
+
+    return avg_iterations
+
+
+def best_const_avg(points, param, optimum, radius, function, tab_len, minimize: bool = True):
+    avg_iterations = 0
+
+    for i in range(len(points)):
+        print("const ", i + 1, " out of ", len(points))
+        tsa = TabuSimulatedAnnealing()
+
+        if minimize:
+            tsa.set_minimize()
+        else:
+            tsa.set_maximize()
+
+        first_point = points[i]
+
+        tsa.set_start(point=first_point, score_function=function, tabu_length=tab_len)
+        t = 1
+        lowest_iterations = None
+        while t < AVG_ITERATIONS:
+            point, score, _ = tsa.next(temperature=const(param))
+
+            if np.linalg.norm(point - optimum) <= radius:
+                if lowest_iterations is None or t < lowest_iterations:
+                    lowest_iterations = t
+                break
+            t = t + 1
+        if lowest_iterations is None:
+            lowest_iterations = t
+        avg_iterations = avg_iterations + lowest_iterations
+
+    avg_iterations = avg_iterations / len(points)
+
+    return avg_iterations
+
+
+def collect_params_data() -> {}:
+    all = {}
+    all["ackley"] = read_data("ackley_" + PARAM_FILE)
+    all["griewank"] = read_data("griewank_" + PARAM_FILE)
+    all["rastrigin"] = read_data("rastrigin_" + PARAM_FILE)
+    save_data("all_" + PARAM_FILE, all)
+    return all
+
+
 def collect_params() -> {}:
     # ackley
     ackley_best_param = {}
@@ -67,7 +327,7 @@ def collect_params() -> {}:
             now = datetime.now()
             current_time = now.strftime("%H:%M:%S")
             print("Current Time =", current_time)
-            print("ackley_"+str(dim)+" "+str(tab_len))
+            print("ackley_" + str(dim) + " " + str(tab_len))
             ackley_best_param[dim][tab_len] = {}
             # const
             ackley_best_param[dim][tab_len]["const"] = best_const_params(ackley, tab_len, dim)
@@ -128,13 +388,7 @@ def collect_params() -> {}:
             rastrigin_best_param[dim][tab_len]["geometrical"] = best_geometrical_params(rastrigin, tab_len, dim)
             save_data("rastrigin_" + PARAM_FILE, rastrigin_best_param)
 
-    all = {}
-    all["ackley"] = ackley_best_param
-    all["griewank"] = griewank_best_param
-    all["rastrigin"] = rastrigin_best_param
-    save_data("all_" + PARAM_FILE, all)
-
-    return all
+    return collect_params_data()
 
 
 def best_adaptive_params(function, tab_len, dimension: int = 2, minimize: bool = True):
@@ -161,7 +415,7 @@ def best_adaptive_params(function, tab_len, dimension: int = 2, minimize: bool =
             temperature = 1
             better = 0
             worse = 0
-            while t < ITERATIONS:
+            while t < BEST_PARAMS_ITERATIONS:
                 temperature1 = adaptive(temperature, params[0], params[1], better, worse)
                 _, score, diff = tsa.next(temperature=temperature1)
                 param_sum += score
@@ -204,7 +458,7 @@ def best_logarithmic_params(function, tab_len, dimension: int = 2, minimize: boo
             tsa.set_start(point=first_point, score_function=function, tabu_length=tab_len)
 
             t = 1
-            while t < ITERATIONS:
+            while t < BEST_PARAMS_ITERATIONS:
                 _, score, _ = tsa.next(temperature=logarithmic(t, A))
                 param_sum += score
                 t = t + 1
@@ -242,7 +496,7 @@ def best_geometrical_params(function, tab_len, dimension: int = 2, minimize: boo
             tsa.set_start(point=first_point, score_function=function, tabu_length=tab_len)
 
             t = 1
-            while t < ITERATIONS:
+            while t < BEST_PARAMS_ITERATIONS:
                 _, score, _ = tsa.next(temperature=geometrical(t, params[0], params[1]))
                 param_sum += score
                 t = t + 1
@@ -280,7 +534,7 @@ def best_const_params(function, tab_len, dimension: int = 2, minimize: bool = Tr
             tsa.set_start(point=first_point, score_function=function, tabu_length=tab_len)
 
             t = 1
-            while t < ITERATIONS:
+            while t < BEST_PARAMS_ITERATIONS:
                 _, score, _ = tsa.next(temperature=const(A))
                 param_sum += score
                 t = t + 1
@@ -303,7 +557,7 @@ def const_params_diff_2D():
     tsa1, tsa2 = prepare_algorithm_diff()
 
     t = 1
-    while t < ITERATIONS:
+    while t < BEST_PARAMS_ITERATIONS:
         tsa1.next(temperature=const(A1))
         tsa2.next(temperature=const(A2))
         t = t + 1
@@ -323,7 +577,7 @@ def geometrical_params_diff_2D():
     tsa1, tsa2 = prepare_algorithm_diff()
 
     t = 1
-    while t < ITERATIONS:
+    while t < BEST_PARAMS_ITERATIONS:
         tsa1.next(temperature=geometrical(t, A1, B))
         tsa2.next(temperature=geometrical(t, A2, B))
         t = t + 1
@@ -333,7 +587,7 @@ def geometrical_params_diff_2D():
     tsa1, tsa2 = prepare_algorithm_diff()
 
     t = 1
-    while t < ITERATIONS:
+    while t < BEST_PARAMS_ITERATIONS:
         tsa1.next(temperature=geometrical(t, A, B1))
         tsa2.next(temperature=geometrical(t, A, B2))
         t = t + 1
@@ -349,7 +603,7 @@ def logarithmic_params_diff_2D():
     tsa1, tsa2 = prepare_algorithm_diff()
 
     t = 1
-    while t < ITERATIONS:
+    while t < BEST_PARAMS_ITERATIONS:
         tsa1.next(temperature=logarithmic(t, A1))
         tsa2.next(temperature=logarithmic(t, A2))
         t = t + 1
@@ -375,7 +629,7 @@ def adaptive_params_diff_2D():
     better2 = 0
     worse1 = 0
     worse2 = 0
-    while t < ITERATIONS:
+    while t < BEST_PARAMS_ITERATIONS:
         temperature1 = adaptive(temperature1, A1, B, better1, worse1)
         _, _, diff = tsa1.next(temperature=temperature1)
         if diff is "better":
@@ -401,7 +655,7 @@ def adaptive_params_diff_2D():
     better2 = 0
     worse1 = 0
     worse2 = 0
-    while t < ITERATIONS:
+    while t < BEST_PARAMS_ITERATIONS:
         temperature1 = adaptive(temperature1, A, B1, better1, worse1)
         _, _, diff = tsa1.next(temperature=temperature1)
         if diff is "better":
@@ -478,14 +732,5 @@ def print_progress_bar(iteration: int, total: int, length: int = 50) -> None:
     if iteration == total:
         print("\n")
 
-# const_params_diff_2D()
-# geometrical_params_diff_2D()
-# logarithmic_params_diff_2D()
-# adaptive_params_diff_2D()
 
-# print(best_const_params(ackley, 10))
-# print(best_geometrical_params(ackley, 10))
-# print(best_logarithmic_params(ackley, 10))
-# print(best_adaptive_params(ackley, 10))
-
-collect_params()
+collect_avg_iterations()

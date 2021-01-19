@@ -20,7 +20,7 @@ class TabuSimulatedAnnealing:
 
     """
 
-    def __init__(self, radius: float = 1.0, alpha: float = 0.5, clip: float = 0.0, max_tabu_tries: int = 1e6):
+    def __init__(self, radius: float = 1.0, alpha: float = 0.5, clip: float = 0.0, max_tabu_tries: int = 100):
         assert radius > 0
         assert alpha >= 0
         assert clip >= 0

@@ -23,7 +23,7 @@ def geometric(t: int, A: float, B: float) -> float:
 
 
 def adaptive(temperature: float, A: float, B: float, n_better: int, n_worse: int):
-    assert temperature > 0
+    temperature = max(temperature, 1e-3)
     assert A > 0
     assert 0 < B < 1
     assert n_better >= 0
